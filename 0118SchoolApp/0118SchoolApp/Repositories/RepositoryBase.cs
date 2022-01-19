@@ -37,7 +37,7 @@ namespace _0118SchoolApp.Repositories
             _context.Update(entity);
             _context.SaveChanges();
         }
-        public void Delete(int entityId) // gal irgi siusti entity?
+        public void Delete(int entityId) 
         {
             var entity = GetById(entityId);
             _context.Remove(entity);

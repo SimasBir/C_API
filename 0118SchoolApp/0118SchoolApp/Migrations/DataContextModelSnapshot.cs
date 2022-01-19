@@ -40,7 +40,7 @@ namespace _0118SchoolApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Schools");
+                    b.ToTable("Schools", (string)null);
                 });
 
             modelBuilder.Entity("_0118SchoolApp.Models.Student", b =>
@@ -66,7 +66,7 @@ namespace _0118SchoolApp.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("Students");
+                    b.ToTable("Students", (string)null);
                 });
 
             modelBuilder.Entity("_0118SchoolApp.Models.Student", b =>

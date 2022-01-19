@@ -13,6 +13,7 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace _0118SchoolApp
@@ -33,6 +34,10 @@ namespace _0118SchoolApp
             services.AddDbContext<DataContext>(d => d.UseSqlServer(defaultConnection));
             services.AddTransient<SchoolRepository>();
             services.AddTransient<StudentRepository>();
+
+            services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles); //ASP.NET Core 6+
+
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
