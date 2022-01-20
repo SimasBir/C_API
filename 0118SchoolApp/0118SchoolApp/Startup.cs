@@ -34,6 +34,7 @@ namespace _0118SchoolApp
             services.AddDbContext<DataContext>(d => d.UseSqlServer(defaultConnection));
             services.AddTransient<SchoolRepository>();
             services.AddTransient<StudentRepository>();
+            services.AddTransient<GenderRepository>();
 
             services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles); //ASP.NET Core 6+

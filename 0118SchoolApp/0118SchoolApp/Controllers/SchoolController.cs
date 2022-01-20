@@ -2,6 +2,7 @@
 using _0118SchoolApp.Dtos;
 using _0118SchoolApp.Models;
 using _0118SchoolApp.Repositories;
+//using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -21,21 +22,26 @@ namespace _0118SchoolApp.Controllers
             _schoolRepository = schoolRepository;
         }
         [HttpGet]
-        public List<School> GetAll()
+        public IActionResult GetAll()
         {
-            return _schoolRepository.GetAll();
+            return Ok(_schoolRepository.GetAll());
         }
         [HttpGet("{id}")]
-        public School GetById(int id)
+        public IActionResult GetById(int id)
         {
-            return _schoolRepository.GetById(id);
+                return new ObjectResult(_schoolRepository.GetById(id)) { StatusCode = 302}; //302-found
         }
+
+        //[HttpPost()]
+        //[ProducesResponseType(StatusCodes.Status201Created)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+
         [HttpPost]
-        public string Create(SchoolCreate schoolCreate)
+        public IActionResult Create(SchoolCreate schoolCreate)
         {
             if (!ModelState.IsValid)
             {
-                return "Error, not created";
+                return BadRequest("Error, not created");
             }
             School school = new School()
             {
@@ -43,27 +49,28 @@ namespace _0118SchoolApp.Controllers
                 Created = schoolCreate.Created
             };
             _schoolRepository.Create(school);
-            return "Created";
+            return new ObjectResult("Created") { StatusCode = 201 }; //201 - created
+            
         }
         [HttpPut("{id}")]
-        public string Update(int id, SchoolCreate schoolCreate)
+        public IActionResult Update(int id, SchoolCreate schoolCreate)
         {
             if (!ModelState.IsValid)
             {
-                return "Error, not updated";
+                return BadRequest();
             }
             var school = _schoolRepository.GetById(id);
             school.Name = schoolCreate.Name;
             //school.Created = DateTime.UtcNow; //Ideti nauja sios akimirkos datetime? ar pasiimti kaip string?
             school.Created = schoolCreate.Created;
             _schoolRepository.Update(school);
-            return "Updated";
+            return Ok("Updated");
         }
         [HttpDelete("{id}")]
-        public string Delete(int id)
+        public IActionResult Delete(int id)
         {
             _schoolRepository.Delete(id);
-            return "Deleted";
+            return Ok("Deleted");
         }
     }
 }

@@ -22,6 +22,41 @@ namespace _0118SchoolApp.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("_0118SchoolApp.Models.Gender", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Genders");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Male"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Female"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Unspecified"
+                        });
+                });
+
             modelBuilder.Entity("_0118SchoolApp.Models.School", b =>
                 {
                     b.Property<int>("Id")
@@ -40,7 +75,7 @@ namespace _0118SchoolApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Schools", (string)null);
+                    b.ToTable("Schools");
                 });
 
             modelBuilder.Entity("_0118SchoolApp.Models.Student", b =>
@@ -51,8 +86,8 @@ namespace _0118SchoolApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Gender")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("GenderId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -64,18 +99,35 @@ namespace _0118SchoolApp.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GenderId");
+
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("Students", (string)null);
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("_0118SchoolApp.Models.Student", b =>
                 {
-                    b.HasOne("_0118SchoolApp.Models.School", null)
+                    b.HasOne("_0118SchoolApp.Models.Gender", "Gender")
+                        .WithMany("Students")
+                        .HasForeignKey("GenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("_0118SchoolApp.Models.School", "School")
                         .WithMany("Students")
                         .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Gender");
+
+                    b.Navigation("School");
+                });
+
+            modelBuilder.Entity("_0118SchoolApp.Models.Gender", b =>
+                {
+                    b.Navigation("Students");
                 });
 
             modelBuilder.Entity("_0118SchoolApp.Models.School", b =>

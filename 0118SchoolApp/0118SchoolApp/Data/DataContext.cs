@@ -12,9 +12,30 @@ namespace _0118SchoolApp.Data
     {
         public DbSet<School> Schools { get; set; }
         public DbSet<Student> Students { get; set; }
+        public DbSet<Gender> Genders { get; set; }
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
 
+            modelBuilder.Entity<Gender>().HasData(
+                new Gender()
+                {
+                    Id = 1,
+                    Name = "Male",
+                },
+                new Gender()
+                {
+                    Id = 2,
+                    Name = "Female",
+                },
+                new Gender()
+                {
+                    Id = 3,
+                    Name = "Unspecified",
+                }
+            );
         }
     }
 }

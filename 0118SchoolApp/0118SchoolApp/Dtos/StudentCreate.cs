@@ -12,7 +12,7 @@ namespace _0118SchoolApp.Dtos
         [Required]
         [StringLength(255, MinimumLength = 3)]
         public string Name { get; set; }
-        public char Gender { get; set; } // remake as schema M/F/NaN
+        public int GenderId { get; set; } 
         public int SchoolId { get; set; }
     }
 }

@@ -16,78 +16,92 @@ namespace _0118SchoolApp.Controllers
     public class StudentController : ControllerBase
     {
         private StudentRepository _studentRepository;
-        public StudentController(StudentRepository studentRepository)
+        private GenderRepository _genderRepository;
+        private SchoolRepository _schoolRepository;
+        public StudentController(StudentRepository studentRepository, GenderRepository genderRepository, SchoolRepository schoolRepository)
         {
             _studentRepository = studentRepository;
+            _genderRepository = genderRepository;
+            _schoolRepository = schoolRepository;
         }
         [HttpGet]
-        public List<Student> GetAll()
+        public IActionResult GetAll()
         {
-            return _studentRepository.GetAll();
+            return Ok(_studentRepository.GetAll());
         }
         [HttpGet("{id}")]
-        public Student GetById(int id)
+        public IActionResult GetById(int id)
         {
-            return _studentRepository.GetById(id);
+            return Ok(_studentRepository.GetById(id));
         }
         [HttpPost]
-        public string Create(StudentCreate studentCreate)
+        public IActionResult Create(StudentCreate studentCreate)
         {
 
             if (!ModelState.IsValid)
             {
-                return "Error, not created";
+                return BadRequest("Model state not valid");
             }
-            if (new[] { 'm', 'f', 'u' }.Contains(Char.ToLower(studentCreate.Gender)))
+            //if (new[] { 'm', 'f', 'u' }.Contains(Char.ToLower(studentCreate.Gender)))
+            //{
+            if (_genderRepository.GetById(studentCreate.GenderId) == null || _schoolRepository.GetById(studentCreate.SchoolId) == null)
+            {
+                return BadRequest("Selection not possible");
+            }
+            else
             {
                 Student student = new Student()
                 {
                     Name = studentCreate.Name,
-                    Gender = Char.ToLower(studentCreate.Gender),
+                    //Gender = Char.ToLower(studentCreate.Gender),
+                    GenderId = studentCreate.GenderId,
                     SchoolId = studentCreate.SchoolId
                 };
                 _studentRepository.Create(student);
-                return "Created";
+                return Created("Created", studentCreate);
             }
-            else
-            {
-                return "Not created. Gender selection: m, f, u";
-            }
+            //}
+            //else
+            //{
+            //    return "Not created. Gender selection: m, f, u";
+            //}
 
         }
         [HttpPut("{id}")]
-        public string Update(int id, StudentCreate studentCreate)
+        public IActionResult Update(int id, StudentCreate studentCreate)
         {
             if (!ModelState.IsValid)
             {
-                return "Error, not updated";
+                return BadRequest("Model state not valid");
             }
-            var student = _studentRepository.GetById(id);
-            if (student != null)
+            if (_genderRepository.GetById(studentCreate.GenderId) == null || _schoolRepository.GetById(studentCreate.SchoolId) == null)
             {
-                if (new[] { 'm', 'f', 'u' }.Contains(Char.ToLower(studentCreate.Gender)))
-                {
-                    student.Name = studentCreate.Name;
-                    student.Gender = studentCreate.Gender;
-                    student.SchoolId = studentCreate.SchoolId;
-                    _studentRepository.Update(student);
-                    return "Updated";
-                }
-                else
-                {
-                    return "Not updated. Gender selection: m, f, u";
-                }
+                return BadRequest("Selection not possible");
             }
             else
             {
-                return "Not updated. No such student";
+                var student = _studentRepository.GetById(id);
+                if (student != null)
+                {
+                    student.Name = studentCreate.Name;
+                    //student.Gender = studentCreate.Gender;
+                    student.GenderId = studentCreate.GenderId;
+                    student.SchoolId = studentCreate.SchoolId;
+                    _studentRepository.Update(student);
+                    return Ok("Updated");
+
+                }
+                else
+                {
+                    return NotFound("Student with such ID does not exist");
+                }
             }
         }
         [HttpDelete("{id}")]
-        public string Delete(int id)
+        public IActionResult Delete(int id)
         {
             _studentRepository.Delete(id);
-            return "Deleted";
+            return Ok("Deleted");
         }
     }
 }

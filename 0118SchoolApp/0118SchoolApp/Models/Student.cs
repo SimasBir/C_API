@@ -9,7 +9,8 @@ namespace _0118SchoolApp.Models
 {
     public class Student : NamedEntity
     {
-        public char Gender { get; set; } // remake as schema M/F/N(not available?)/U(unknown/unspecified?) - or tinyInt using ISO/IEC 5218?
+        public int GenderId { get; set; } // remake as schema M/F/N(not available?)/U(unknown/unspecified?) - or tinyInt using ISO/IEC 5218?
+        public Gender Gender { get; set; } 
         //[Compare("Gender")]
         //public char GenderSelection { get; set; }
         public int SchoolId { get; set; }
