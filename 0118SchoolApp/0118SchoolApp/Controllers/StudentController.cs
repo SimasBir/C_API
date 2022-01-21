@@ -32,7 +32,21 @@ namespace _0118SchoolApp.Controllers
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            return Ok(_studentRepository.GetById(id));
+            if (_studentRepository.GetById(id) != null)
+            {
+                Student student = _studentRepository.GetById(id);
+                StudentView studentView = new StudentView()
+                {
+                    Name = student.Name,
+                    Gender = student.Gender.Name,
+                    School = student.School.Name,
+                };
+                return Ok(studentView);
+            }
+            else
+            {
+                return BadRequest("No such student");
+            }
         }
         [HttpPost]
         public IActionResult Create(StudentCreate studentCreate)
