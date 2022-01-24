@@ -45,7 +45,7 @@ namespace _0118SchoolApp.Controllers
             }
             else
             {
-                return BadRequest("No such student");
+                return NotFound("No such student");
             }
         }
         [HttpPost]
