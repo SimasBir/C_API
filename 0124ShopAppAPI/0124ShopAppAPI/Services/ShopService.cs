@@ -1,6 +1,9 @@
 ﻿using _0124ShopAppAPI.Data;
 using _0124ShopAppAPI.Dtos;
 using _0124ShopAppAPI.Models;
+using _0124ShopAppAPI.Validators;
+using AutoMapper;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,8 +15,11 @@ namespace _0124ShopAppAPI.Services
 {
     public class ShopService : ServiceBase<Shop>
     {
-        public ShopService(DataContext context) : base(context)
+        private readonly CreateShopValidator _validator;
+        private readonly IMapper _mapper;
+        public ShopService(DataContext context, IMapper mapper) : base(context)
         {
+            _mapper = mapper;
         }
         private List<ViewShop> GetDto(List<Shop> allShops)
         {
@@ -65,6 +71,8 @@ namespace _0124ShopAppAPI.Services
             {
                 throw new ArgumentException($"Name {createShop.Name} already exists");
             }
+            //CreateShopValidator validator = new CreateShopValidator();
+            _validator.ValidateAndThrow(createShop);
             Shop shop = new Shop()
             {
                 Name = createShop.Name, 
@@ -86,6 +94,8 @@ namespace _0124ShopAppAPI.Services
             {
                 throw new ArgumentException($"Shop with the id {id} was not found");
             }
+            //CreateShopValidator validator = new CreateShopValidator();
+            _validator.ValidateAndThrow(createShop);
             shop.Name = createShop.Name;
             _context.Update(shop);
             _context.SaveChanges();

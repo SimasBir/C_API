@@ -1,5 +1,6 @@
 ﻿using _0124ShopAppAPI.Dtos;
 using _0124ShopAppAPI.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -40,16 +41,20 @@ namespace _0124ShopAppAPI.Controllers
         [HttpPost]
         public IActionResult Create(CreateShop createShop)
         {
-            if (!ModelState.IsValid) 
-            {
-                return BadRequest(ModelState); 
-            }
+            //if (!ModelState.IsValid) 
+            //{
+            //    return BadRequest(ModelState); 
+            //}
             try
             {
                 var createdId = _shopService.Create(createShop);
                 return Created("Shop has been created. Id: ", createdId); //neraso to stringo, tai kam jis?
             }
-            catch(ArgumentException ex)
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -57,14 +62,18 @@ namespace _0124ShopAppAPI.Controllers
         [HttpPut("{id}")]
         public IActionResult Update(int id, CreateShop createShop)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
             try
             {
                 var createdId = _shopService.Update(id, createShop);
                 return Created("Shop has been updated. Id: ", createdId);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (ArgumentException ex)
             {

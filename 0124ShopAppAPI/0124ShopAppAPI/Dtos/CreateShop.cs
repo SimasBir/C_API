@@ -9,7 +9,7 @@ namespace _0124ShopAppAPI.Dtos
 {
     public class CreateShop
     {
-        [MinLength(4)]
+        //[MinLength(4)]
         public string Name { get; set; }
         public DateTime CreatedDate { get; set; } 
     }

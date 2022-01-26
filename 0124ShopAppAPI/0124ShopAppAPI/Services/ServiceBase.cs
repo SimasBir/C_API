@@ -1,4 +1,5 @@
 ﻿using _0124ShopAppAPI.Data;
+using _0124ShopAppAPI.Exceptions;
 using _0124ShopAppAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -44,7 +45,8 @@ namespace _0124ShopAppAPI.Services
             var entity = GetById(entityId);
             if (entity == null)
             {
-                throw new ArgumentException($"Id {entityId} was not found");
+                throw new IdNotFoundException("Id not found: ", entityId);
+                //throw new ArgumentException($"Id {entityId} was not found");
             }
             _context.Remove(entity);
             _context.SaveChanges();

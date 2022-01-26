@@ -1,3 +1,4 @@
+using _0124ShopAppAPI.AutoMapper;
 using _0124ShopAppAPI.Data;
 using _0124ShopAppAPI.Services;
 using Microsoft.AspNetCore.Builder;
@@ -33,6 +34,8 @@ namespace _0124ShopAppAPI
             services.AddDbContext<DataContext>(d => d.UseSqlServer(defaultConnection));
             services.AddTransient<ShopService>();
             services.AddTransient<ShopItemService>();
+
+            services.AddAutoMapper(typeof(ShopProfile));
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

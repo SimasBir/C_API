@@ -1,18 +1,25 @@
 ﻿using _0124ShopAppAPI.Data;
 using _0124ShopAppAPI.Dtos;
+using _0124ShopAppAPI.Validators;
 using _0124ShopAppAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FluentValidation.Results;
+using FluentValidation;
+using AutoMapper;
 
 namespace _0124ShopAppAPI.Services
 {
     public class ShopItemService : ServiceBase<ShopItem>
     {
-        public ShopItemService(DataContext context) : base(context)
+        private readonly CreateShopItemValidator _validator;
+        private readonly IMapper _mapper;
+        public ShopItemService(DataContext context, IMapper mapper) : base(context)
         {
+            _mapper = mapper;
         }
         private List<ViewShopItem> GetDto(List<ShopItem> allShopItems)
         {
@@ -53,6 +60,9 @@ namespace _0124ShopAppAPI.Services
             {
                 throw new ArgumentException($"ShopId {createShopItem.ShopId} not found");
             }
+
+            //CreateShopItemValidator _validator = new CreateShopItemValidator();
+            _validator.ValidateAndThrow(createShopItem);
             ShopItem shopItem = new ShopItem()
             {
                 Name = createShopItem.Name,
@@ -64,8 +74,19 @@ namespace _0124ShopAppAPI.Services
             return shopItem.Id;
         }
         public int Update(int id, CreateShopItem createShopItem)
-        {
+        {            
             var shopItem = base.GetById(id);
+            if(shopItem == null)
+            {
+                throw new ArgumentException($"ShopItem {id} not found");
+            }
+            var validShopId = _context.Shops.Any(s => s.Id == createShopItem.ShopId);
+            if (!validShopId)
+            {
+                throw new ArgumentException($"ShopId {createShopItem.ShopId} not found");
+            }
+            _validator.ValidateAndThrow(createShopItem);
+
             shopItem.Name = createShopItem.Name;
             shopItem.Price = createShopItem.Price;
             shopItem.ShopId = createShopItem.ShopId;

@@ -1,5 +1,6 @@
 ﻿using _0124ShopAppAPI.Dtos;
 using _0124ShopAppAPI.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -40,14 +41,18 @@ namespace _0124ShopAppAPI.Controllers
         [HttpPost]
         public IActionResult Create(CreateShopItem createShopItem)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
             try
             {
                 var createdId = _shopItemService.Create(createShopItem);
                 return Created("ShopItem has been created. Id: ", createdId);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (ArgumentException ex)
             {
@@ -57,14 +62,18 @@ namespace _0124ShopAppAPI.Controllers
         [HttpPut("{id}")]
         public IActionResult Update(int id, CreateShopItem createShopItem)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
             try
             {
                 var createdId = _shopItemService.Update(id, createShopItem);
                 return Created("ShopItem has been updated. Id: ", createdId);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (ArgumentException ex)
             {
@@ -81,6 +90,10 @@ namespace _0124ShopAppAPI.Controllers
                 return Ok(id + " has been deleted");
             }
             catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
