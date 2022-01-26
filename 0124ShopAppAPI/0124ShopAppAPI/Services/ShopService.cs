@@ -15,54 +15,60 @@ namespace _0124ShopAppAPI.Services
 {
     public class ShopService : ServiceBase<Shop>
     {
-        private readonly CreateShopValidator _validator;
+        private readonly CreateShopValidator _validator = new CreateShopValidator();
         private readonly IMapper _mapper;
         public ShopService(DataContext context, IMapper mapper) : base(context)
         {
             _mapper = mapper;
         }
-        private List<ViewShop> GetDto(List<Shop> allShops)
-        {
-            var shopList = new List<ViewShop>();
-            foreach (var shop in allShops)
-            {
-                var newShop = new ViewShop()
-                {
-                    Id = shop.Id,
-                    Name = shop.Name,
-                    CreatedDate = shop.CreatedDate,
-                    ShopItems = new List<ViewShopItem>()
-                };
-                foreach (var shopItem in shop.ShopItems)
-                {
-                    var newShopItem = new ViewShopItem()
-                    {
-                        Id = shopItem.Id,
-                        Name = shopItem.Name,
-                        Price = shopItem.Price,
-                    };
-                    newShop.ShopItems.Add(newShopItem);
-                }
-                shopList.Add(newShop);
-            }
-            return shopList;
-        }
+        //private List<ViewShop> GetDto(List<Shop> allShops)
+        //{
+        //    var shopList = new List<ViewShop>();
+        //    foreach (var shop in allShops)
+        //    {
+        //        var newShop = new ViewShop()
+        //        {
+        //            Id = shop.Id,
+        //            Name = shop.Name,
+        //            CreatedDate = shop.CreatedDate,
+        //            ShopItems = new List<ViewShopItem>()
+        //        };
+        //        foreach (var shopItem in shop.ShopItems)
+        //        {
+        //            var newShopItem = new ViewShopItem()
+        //            {
+        //                Id = shopItem.Id,
+        //                Name = shopItem.Name,
+        //                Price = shopItem.Price,
+        //            };
+        //            newShop.ShopItems.Add(newShopItem);
+        //        }
+        //        shopList.Add(newShop);
+        //    }
+        //    return shopList;
+        //}
 
         public new List<ViewShop> GetAll()
         {
             var allShops = _context.Shops.Include(s => s.ShopItems).ToList();
-            var shopList = GetDto(allShops);
-            return shopList;
+            List<ViewShop> newShopList = new List<ViewShop>();
+            foreach (var shop in allShops)
+            {
+                newShopList.Add(_mapper.Map<ViewShop>(shop));
+            }
+            //var shopList = GetDto(allShops);
+            return newShopList;
         }
-        public new List<ViewShop> GetById(int id)
+        public new ViewShop GetById(int id)
         {
-            var allShops = _context.Shops.Include(s => s.ShopItems).Where(i => i.Id == id).ToList();
-            if (allShops == null)
+            var allShop = _context.Shops.Include(s => s.ShopItems).Where(i => i.Id == id).FirstOrDefault();
+            if (allShop == null)
             {
                 throw new ArgumentException($"Shop {id} not found");
             }
-            var shopList = GetDto(allShops);
-            return shopList;
+            var shop = _mapper.Map<ViewShop>(allShop);
+            //var shopList = GetDto(allShops);
+            return shop;
         }
         public int Create(CreateShop createShop)
         {
@@ -73,11 +79,12 @@ namespace _0124ShopAppAPI.Services
             }
             //CreateShopValidator validator = new CreateShopValidator();
             _validator.ValidateAndThrow(createShop);
-            Shop shop = new Shop()
-            {
-                Name = createShop.Name, 
-                CreatedDate = DateTime.UtcNow,
-            };
+            Shop shop = _mapper.Map<Shop>(createShop);
+            //Shop shop = new Shop()
+            //{
+            //    Name = createShop.Name, 
+            //    CreatedDate = DateTime.UtcNow,
+            //};
             _context.Add(shop);
             _context.SaveChanges();
             return shop.Id;

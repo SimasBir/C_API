@@ -13,7 +13,7 @@ namespace _0124ShopAppAPI.Validators
     {
         public CreateShopItemValidator()
         {
-            RuleFor(item => item.Price).GreaterThan(4);
+            RuleFor(item => item.Price).GreaterThan(0);
         }
     }
 }

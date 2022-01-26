@@ -13,8 +13,10 @@ namespace _0124ShopAppAPI.AutoMapper
     {
         public ShopProfile()
         {
-            CreateMap<Shop, CreateShop>();
-            CreateMap<ShopItem, CreateShopItem>();
+            CreateMap<Shop, CreateShop>().ReverseMap();
+            CreateMap<Shop, ViewShop>();
+            CreateMap<ShopItem, CreateShopItem>().ReverseMap();
+            CreateMap<ShopItem, ViewShopItem>();
         }
     }
 }
