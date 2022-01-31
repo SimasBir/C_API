@@ -20,17 +20,17 @@ namespace _0124ShopAppAPI.Controllers
             _shopService = shopService;
         }
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var shopList = _shopService.GetAll();
+            var shopList = await _shopService.GetAllAsync();
             return Ok(shopList);
         }
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             try
             {
-            var shopList = _shopService.GetById(id);
+            var shopList = await _shopService.GetByIdAsync(id);
                 return Ok(shopList);
             }
             catch (ArgumentException ex)
@@ -39,7 +39,7 @@ namespace _0124ShopAppAPI.Controllers
             }
         }
         [HttpPost]
-        public IActionResult Create(CreateShop createShop)
+        public async Task<IActionResult> Create(CreateShop createShop)
         {
             //if (!ModelState.IsValid) 
             //{
@@ -47,7 +47,7 @@ namespace _0124ShopAppAPI.Controllers
             //}
             try
             {
-                var createdId = _shopService.Create(createShop);
+                var createdId = await _shopService.CreateAsync(createShop);
                 return Created("Shop has been created. Id: ", createdId); //neraso to stringo, tai kam jis?
             }
             catch (ValidationException ex)
@@ -60,7 +60,7 @@ namespace _0124ShopAppAPI.Controllers
             }
         }
         [HttpPut("{id}")]
-        public IActionResult Update(int id, CreateShop createShop)
+        public async Task<IActionResult> Update(int id, CreateShop createShop)
         {
             //if (!ModelState.IsValid)
             //{
@@ -68,7 +68,7 @@ namespace _0124ShopAppAPI.Controllers
             //}
             try
             {
-                var createdId = _shopService.Update(id, createShop);
+                var createdId = await _shopService.UpdateAsync(id, createShop);
                 return Created("Shop has been updated. Id: ", createdId);
             }
             catch (ValidationException ex)
@@ -82,11 +82,11 @@ namespace _0124ShopAppAPI.Controllers
 
         }
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                _shopService.Delete(id);
+                await _shopService.DeleteAsync(id);
                 return Ok(id + " has been deleted");
             }
             catch (ArgumentException ex)

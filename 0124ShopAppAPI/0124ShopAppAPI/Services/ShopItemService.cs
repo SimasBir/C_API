@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using FluentValidation.Results;
 using FluentValidation;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace _0124ShopAppAPI.Services
 {
@@ -37,20 +38,20 @@ namespace _0124ShopAppAPI.Services
         //    }
         //    return shopItemList;
         //}
-        public new List<ViewShopItem> GetAll()
+        public new async Task<List<ViewShopItem>> GetAllAsync()
         {
-            var allShopItems = _context.ShopItems.ToList();
+            var allShopItems = await _context.ShopItems.Include(b=>b.Shop).ToListAsync();
             List<ViewShopItem> newItemList = new List<ViewShopItem>();
             foreach(var shopItem in allShopItems)
             {
-                newItemList.Add(_mapper.Map<ViewShopItem>(shopItem));
+                newItemList.Add(_mapper.Map<ViewShopItem>(shopItem));                
             }
             //var shopItemList = GetDto(allShopItems);
             return newItemList;
         }
-        public new ViewShopItem GetById(int id)
+        public new async Task<ViewShopItem> GetByIdAsync(int id)
         {
-            var allShopItem = _context.ShopItems.Where(i=>i.Id==id).FirstOrDefault();
+            var allShopItem = await _context.ShopItems.Where(i=>i.Id==id).Include(b => b.Shop).FirstOrDefaultAsync();
             if (allShopItem == null)
             {
                 throw new ArgumentException($"ShopItem {id} not found");
@@ -59,10 +60,10 @@ namespace _0124ShopAppAPI.Services
             //var shopItemList = GetDto(allShopItems);
             return shopItemList;
         }
-        public int Create(CreateShopItem createShopItem)
+        public async Task<int> CreateAsync(CreateShopItem createShopItem)
         {
 
-            var validShopId = _context.Shops.Any(s=>s.Id == createShopItem.ShopId);
+            var validShopId = await _context.Shops.AnyAsync(s=>s.Id == createShopItem.ShopId);
             if (!validShopId)
             {
                 throw new ArgumentException($"ShopId {createShopItem.ShopId} not found");
@@ -78,17 +79,17 @@ namespace _0124ShopAppAPI.Services
             //    ShopId = createShopItem.ShopId,
             //};
             _context.Add(shopItem);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return shopItem.Id;
         }
-        public int Update(int id, CreateShopItem createShopItem)
+        public async Task<int> UpdateAsync(int id, CreateShopItem createShopItem)
         {            
-            var shopItem = base.GetById(id);
+            var shopItem = await base.GetByIdAsync(id);
             if(shopItem == null)
             {
                 throw new ArgumentException($"ShopItem {id} not found");
             }
-            var validShopId = _context.Shops.Any(s => s.Id == createShopItem.ShopId);
+            var validShopId = await _context.Shops.AnyAsync(s => s.Id == createShopItem.ShopId);
             if (!validShopId)
             {
                 throw new ArgumentException($"ShopId {createShopItem.ShopId} not found");
@@ -98,8 +99,9 @@ namespace _0124ShopAppAPI.Services
             shopItem.Price = createShopItem.Price;
             shopItem.ShopId = createShopItem.ShopId;
             _context.Update(shopItem);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return shopItem.Id;
         }
+
     }
 }

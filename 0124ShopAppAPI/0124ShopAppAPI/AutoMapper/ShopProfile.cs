@@ -16,7 +16,7 @@ namespace _0124ShopAppAPI.AutoMapper
             CreateMap<Shop, CreateShop>().ReverseMap();
             CreateMap<Shop, ViewShop>();
             CreateMap<ShopItem, CreateShopItem>().ReverseMap();
-            CreateMap<ShopItem, ViewShopItem>();
+            CreateMap<ShopItem, ViewShopItem>()/*.ForMember(dest=>dest.ShopName, opt=>opt.MapFrom(src => src.Shop.Name))*/;
         }
     }
 }

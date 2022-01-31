@@ -48,9 +48,9 @@ namespace _0124ShopAppAPI.Services
         //    return shopList;
         //}
 
-        public new List<ViewShop> GetAll()
+        public new async Task<List<ViewShop>> GetAllAsync()
         {
-            var allShops = _context.Shops.Include(s => s.ShopItems).ToList();
+            var allShops = await _context.Shops.Include(s => s.ShopItems).ToListAsync();
             List<ViewShop> newShopList = new List<ViewShop>();
             foreach (var shop in allShops)
             {
@@ -59,9 +59,9 @@ namespace _0124ShopAppAPI.Services
             //var shopList = GetDto(allShops);
             return newShopList;
         }
-        public new ViewShop GetById(int id)
+        public new async Task<ViewShop> GetByIdAsync(int id)
         {
-            var allShop = _context.Shops.Include(s => s.ShopItems).Where(i => i.Id == id).FirstOrDefault();
+            var allShop = await _context.Shops.Include(s => s.ShopItems).Where(i => i.Id == id).FirstOrDefaultAsync();
             if (allShop == null)
             {
                 throw new ArgumentException($"Shop {id} not found");
@@ -70,9 +70,11 @@ namespace _0124ShopAppAPI.Services
             //var shopList = GetDto(allShops);
             return shop;
         }
-        public int Create(CreateShop createShop)
+        public async Task<int> CreateAsync(CreateShop createShop)
         {
-            var existingName = _context.Shops.Select(s => s.Name).Contains(createShop.Name);
+            //var existingName = _context.Shops.Select(s => s.Name).Contains(createShop.Name);
+            var existingName = _context.Shops.Any(s => s.Name == createShop.Name);
+
             if (existingName)
             {
                 throw new ArgumentException($"Name {createShop.Name} already exists");
@@ -86,17 +88,17 @@ namespace _0124ShopAppAPI.Services
             //    CreatedDate = DateTime.UtcNow,
             //};
             _context.Add(shop);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return shop.Id;
         }
-        public int Update(int id, CreateShop createShop)
+        public async Task<int> UpdateAsync(int id, CreateShop createShop)
         {
-            var existingName = _context.Shops.Select(s => s.Name).Contains(createShop.Name);
+            var existingName = await _context.Shops.Select(s => s.Name).ContainsAsync(createShop.Name);
             if (existingName)
             {
                 throw new ArgumentException($"Name {createShop.Name} already exists");
             }
-            var shop = base.GetById(id);
+            var shop = await base.GetByIdAsync(id);
             if(shop == null)
             {
                 throw new ArgumentException($"Shop with the id {id} was not found");
@@ -105,7 +107,7 @@ namespace _0124ShopAppAPI.Services
             _validator.ValidateAndThrow(createShop);
             shop.Name = createShop.Name;
             _context.Update(shop);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return shop.Id;
         }
     }

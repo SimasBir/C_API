@@ -21,35 +21,37 @@ namespace _0124ShopAppAPI.Services
             _dbSet = _context.Set<T>();
         }
 
-        public List<T> GetAll()
+        public async Task<List<T>> GetAllAsync()
         {
-            return _dbSet.ToList();
+            var list = await _dbSet.ToListAsync();
+            return list;
         }
-        public T GetById(int id)
+        public async Task<T> GetByIdAsync(int id)
         {
-            return _dbSet.FirstOrDefault(t => t.Id == id); 
+            var item = await _dbSet.FirstOrDefaultAsync(t => t.Id == id);
+            return item;
         }
-        public int Create(T entity)
+        public async Task<int> CreateAsync(T entity)
         {
             _context.Add(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return entity.Id;
         }
-        public void Update(T entity)
+        public async Task UpdateAsync(T entity)
         {
             _context.Update(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
-        public void Delete(int entityId)
+        public async Task DeleteAsync(int entityId)
         {
-            var entity = GetById(entityId);
+            var entity = await GetByIdAsync(entityId);
             if (entity == null)
             {
                 throw new IdNotFoundException("Id not found: ", entityId);
                 //throw new ArgumentException($"Id {entityId} was not found");
             }
             _context.Remove(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }
