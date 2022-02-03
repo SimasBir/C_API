@@ -37,12 +37,23 @@ namespace _0124ShopAppAPI
 
             services.AddAutoMapper(typeof(ShopProfile));
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowMyOrigin",
+                builder => builder.WithOrigins("http://localhost:4200",
+                                                "https://localhost:44328")
+                                                .AllowAnyMethod()
+
+                );
+            });
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "_0124ShopAppAPI", Version = "v1" });
             });
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -57,6 +68,8 @@ namespace _0124ShopAppAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("AllowMyOrigin");
 
             app.UseAuthorization();
 

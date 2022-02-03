@@ -1,6 +1,7 @@
 ﻿using _0124ShopAppAPI.Dtos;
 using _0124ShopAppAPI.Services;
 using FluentValidation;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace _0124ShopAppAPI.Controllers
 {
+    [EnableCors("AllowMyOrigin")]
     [ApiController]
     [Route("[controller]")]
     public class ShopController : ControllerBase
