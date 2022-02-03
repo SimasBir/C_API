@@ -67,7 +67,7 @@ namespace _0124ShopAppAPI.Migrations
                     b.HasOne("_0124ShopAppAPI.Models.Shop", "Shop")
                         .WithMany("ShopItems")
                         .HasForeignKey("ShopId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Shop");
