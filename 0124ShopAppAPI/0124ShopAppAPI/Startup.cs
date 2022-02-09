@@ -37,15 +37,18 @@ namespace _0124ShopAppAPI
 
             services.AddAutoMapper(typeof(ShopProfile));
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowMyOrigin",
-                builder => builder.WithOrigins("http://localhost:4200",
-                                                "https://localhost:44328")
-                                                .AllowAnyMethod()
+            services.AddCors();
 
-                );
-            });
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy("AllowMyOrigin",
+            //    builder => builder.WithOrigins("http://localhost:4200",
+            //                                    "https://localhost:44328")
+            //                                    .AllowAnyMethod()
+            //                                    .AllowAnyHeader()
+
+            //    );
+            //});
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -65,11 +68,16 @@ namespace _0124ShopAppAPI
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "_0124ShopAppAPI v1"));
             }
 
+            app.UseCors(builder => builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseCors("AllowMyOrigin");
+            //app.UseCors("AllowMyOrigin");
 
             app.UseAuthorization();
 

@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace _0124ShopAppAPI.Controllers
 {
-    [EnableCors("AllowMyOrigin")]
     [ApiController]
     [Route("[controller]")]
     public class ShopController : ControllerBase

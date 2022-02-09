@@ -11,6 +11,6 @@ namespace _0124ShopAppAPI.Dtos
     {
         //[MinLength(4)]
         public string Name { get; set; }
-        public DateTime CreatedDate { get; set; } 
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     }
 }
